@@ -1,6 +1,6 @@
 # ignore folder
 .settings
-
+.cache
 # ignore file
 .classpath
 .project

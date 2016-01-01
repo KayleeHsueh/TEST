@@ -1,0 +1,120 @@
+/* Layout
+------------------------------------------------------------ */
+
+#container {
+	width: 900px;  /* Set Contents width to 900px */
+	margin-left: auto;  /* Automatically compute left margin */
+	margin-right: auto;  /* Automatically compute right margin*/
+}
+
+
+#nav{
+	font-size:16px;
+	font-weight:normal; /*蝎��*/
+	color:#033;
+	background-color:#09F;
+	padding-left:16.5%;
+	padding-right:15%;
+	padding-top:0px;
+	height:45px;
+	margin:0px;
+	}
+	
+#nav li{
+	float:left;
+	width:auto;
+	text-align:center;
+	border-left-width:0px; /*�����*/
+	list-style-type:none;
+	}
+	
+#nav li a{
+	text-decoration:none;
+	display:block;
+	height:35px;
+	width:165px;
+	padding-top:10px
+	}
+	
+#nav li a:hover{
+	color:#FFF;
+	background-color:#39C;
+	}
+
+#content_L{
+	font-size:14px;
+	line-height:2.5em;
+	width:150px;
+	float:left;
+	padding:6px;
+	}
+	
+#L-list{
+	list-style-type:circle;
+	margin:0px;
+	padding:0px;
+	}
+	
+	
+#L-list li a{
+	text-decoration:none;
+	color:#036;
+	border-bottom-style:none;
+	width:150px;
+	display:block;
+	}
+	
+#L-list li a:hover{
+	color:#393;
+	background-color:#CFF;
+	}
+	
+#content_R{
+	font-size:14px;
+	color:#003;
+	margin-left:185px;
+	line-height:2em;
+	padding:0px;
+	padding-top:10px;
+	background-color:#FFF;
+	}
+
+#contentR_in{
+	float:left;
+	}
+	
+#contentR_inR{
+	float:right;
+	}
+	
+#inside{
+	font-size:14px;
+	font-weight:normal;
+	color:#033;
+	padding-left:50px;
+	height:25px;
+	margin:0px;
+	}
+	
+#inside li{
+	float:left;
+	width:auto;
+	text-align:left;
+	border-left-width:0px; /*�����*/
+	list-style-type:circle;
+	}
+	
+#inside li a{
+	text-decoration:none;
+	display:block;
+	height:25px;
+	width:135px;
+	}
+	
+#inside li a:hover{
+	color:#0F0;
+	}
+	
+#footer{
+	clear:both;
+	}

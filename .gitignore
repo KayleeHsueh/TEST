@@ -1,0 +1,6 @@
+# ignore folder
+.settings
+
+# ignore file
+.classpath
+.project

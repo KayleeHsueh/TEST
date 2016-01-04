@@ -12,7 +12,7 @@ public class Comment {
 	private Professor professor=new Professor();
 	private int comLikes;
 	private int courStars;
-	private int comState;
+	private boolean comState=false;
 	//private Date createDate;
 	private Date comUploadDate;
 	private Secretary secretary=new Secretary();
@@ -73,7 +73,14 @@ public class Comment {
 	public void setAddLikes(int comLikes) {
 		this.comLikes = comLikes+1;
 	}
-	
+	public boolean getComState() {
+		return comState;
+	}
+	public void setComState(boolean comState) {
+		if(comState==true){
+			this.comState = comState;
+		}
+	}
 //	public Date getCreateDate() {
 //		return createDate;
 //	}
@@ -92,11 +99,5 @@ public class Comment {
 	}
 	public void setSecretary(Secretary secretary) {
 		this.secretary = secretary;		
-	}
-	public int getComState() {
-		return comState;
-	}
-	public void setComState(int comState) {
-		this.comState = comState;
 	}
 }

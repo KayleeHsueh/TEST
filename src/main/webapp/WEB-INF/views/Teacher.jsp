@@ -14,125 +14,205 @@ body {
 <link href="css/CSS.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="top"></a>
-	<%@include file="../../templete/header.jsp" %>
+
 	<div id="container">
+		
 		<div style="margin-left: 100px">
 			<!-- content -->
+			<br />
 			<ul id="inside">
 				
 				<!--  分頁按鈕 -->
 				<li><a href="Teacher?ProfSpe_ID=401"><font
-						style="font-family: '微軟正黑體', Calibri"><a href="#01">科技行銷</a></font></a></li>
+						style="font-family: '微軟正黑體', Calibri">科技行銷</font></a></li>
 				<!-- 專業ID401 -->
 				<li><a href="Teacher?ProfSpe_ID=402"><font
-						style="font-family: '微軟正黑體', Calibri"><a href="#02">程式設計</a></font></a></li>
+						style="font-family: '微軟正黑體', Calibri">程式設計</font></a></li>
 				<!-- 專業ID402 -->
 				<li><a href="Teacher?ProfSpe_ID=403"><font
-						style="font-family: '微軟正黑體', Calibri"><a href="#03">商業智慧</a></font></a></li>
+						style="font-family: '微軟正黑體', Calibri">商業智慧</font></a></li>
 				<!-- 專業ID403 -->
 				<li><a href="Teacher?ProfSpe_ID=404"><font
-						style="font-family: '微軟正黑體', Calibri"><a href="#04">企業應用</a></font></a></li>
+						style="font-family: '微軟正黑體', Calibri">企業應用</font></a></li>
 				<!-- 專業ID404 -->
 				<li><a href="Teacher?ProfSpe_ID=405"><font
-						style="font-family: '微軟正黑體', Calibri"><a href="#05">電子商務</a></font></a></li>
+						style="font-family: '微軟正黑體', Calibri">電子商務</font></a></li>
 				<!-- 專業ID405 -->
-			</ul><br/>
-			<br /> 
-			<div style="font-family: '微軟正黑體', Calibri">
-			<div style="text-align:left">
-			<font color="#003366" size="+1"><a name="01">科技行銷</a></font>
+			</ul>
+			
+	<c:choose>
+	<c:when test="${sessionScope['scopedTarget.account'].identity=='secretary'}">											
+	<form method="post" action="insertTeacher">
+		<table cellpadding="10px" border="1" bordercolor="#009933" style="font-family:'微軟正黑體', Calibri">
+			<CAPTION>新增</CAPTION>
+			<tr>			
+				<th>教授名稱</th>
+				<th>圖片網址</th>
+				<th>學校</th>
+				<th>科系</th>
+				<th>學位</th>
+				<th>專長</th>			
+				
+			</tr>
+			<tr>			
+				<th><input type="text" name="profName"/></th>
+				<th><input type="text" name="profPicture"/></th>
+				<th><input type="text" name="profGraduateSchool"/></th>
+				<th><input type="text" name="profGraduateDepartment"/></th>
+				<th><input type="text" name="profDegree"/></th>
+				<th>
+				<select class="form-control" id="profSpeName" name="profSpeName" multiple>
+					 <option name="profSpeName" value="企業應用">
+					  	企業應用
+				  	 </option>
+				  	  <option name="profSpeName" value="商業智慧">
+					  	商業智慧
+				  	 </option>
+				  	  <option name="profSpeName" value="科技行銷">
+					  	科技行銷
+				  	 </option>
+				  	  <option name="profSpeName" value="程式設計">
+					  	程式設計
+				  	 </option>
+				  	  <option name="profSpeName" value="電子商務">
+					  	電子商務
+				  	 </option>
+				</select>			
+				</th>
+	   			<th><button type="submit">送出</button></th><br/>				
+			</tr>
+		</table>
+	</form>	
+	</c:when>
+	</c:choose>			
+			
+			
+			
+			<br /> <font style="font-family: '微軟正黑體', Calibri" color="#003366"
+				size="+1">科技行銷</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
-			<div style="padding-left:150px">
 			<table>
 				<c:forEach items="${SpecialtyList1}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" width="150" height="200"/></th> 
+							<th><img src="${teacher.profPicture}" width="100" height="100"/></th> 
 							<th>${teacher.profName}<br />${teacher.profGraduateSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
-					<!-- /c:if -->
+						<tr>
+						<c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
+							<td>
+								<form action="deleteTeacher" method="post">
+									<input type="hidden" name="profID" id="${teacher.profID}" value="${teacher.profID}"></input>
+									<button type = "submit">刪除</button>
+								</form>
+							</td>                                                                     
+						</c:if> 
+						</tr> 
 				</c:forEach>
 			</table>
-			</div>
-			<div align="right"><font style="font-family:'微軟正黑體', Calibri" color="#0C0"><a href="#top">TOP</a></font></div>
 			<br />
-			<br /> <font color="#003366" size="+1"><a name="02">程式設計</a></font>
+			<br /> <font style="font-family: '微軟正黑體', Calibri" color="#003366"
+				size="+1">程式設計</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
-			<div style="padding-left:150px">
-			
 			<table>
 				<c:forEach items="${SpecialtyList2}" var="teacher">
-					<!-- c:if test="${true}" -->
+					
 						<tr>
-							<th><img src="${teacher.profPicture}" width="150" height="200"/></th>  
+							<th><img src="${teacher.profPicture}" width="100" height="100"/></th>  
 							<th>${teacher.profName}<br />${teacher.profGraduateSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
-					<!-- /c:if -->
+						<tr>
+						<c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
+							<td>
+								<form action="deleteTeacher" method="post">
+									<input type="hidden" name="profID" id="${teacher.profID}" value="${teacher.profID}"></input>
+									<button type = "submit">刪除</button>
+								</form>
+							</td>                                                                     
+						</c:if>
+						</tr>   
+						<tr></tr>					
 				</c:forEach>
 			</table>
-			
-			</div>
-			<div align="right"><font style="font-family:'微軟正黑體', Calibri" color="#0C0"><a href="#top">TOP</a></font></div>
 			<br />
-			<br /> <font color="#003366" size="+1"><a name="03">商業智慧</a></font>
+			<br /> <font style="font-family: '微軟正黑體', Calibri" color="#003366"
+				size="+1">商業智慧</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
-			<div style="padding-left:150px">
 			<table>
 				<c:forEach items="${SpecialtyList3}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" width="150" height="200"/></th> 
+							<th><img src="${teacher.profPicture}" width="100" height="100"/></th> 
 							<th>${teacher.profName}<br />${teacher.profGraduateSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
-					<!-- /c:if -->
+						<tr>
+						<c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
+							<td>
+								<form action="deleteTeacher" method="post">
+									<input type="hidden" name="profID" id="${teacher.profID}" value="${teacher.profID}"></input>
+									<button type = "submit">刪除</button>
+								</form>
+							</td>                                                                     
+						</c:if> 
+						</tr>
 				</c:forEach>
 			</table>
-			</div>
-			<div align="right"><font style="font-family:'微軟正黑體', Calibri" color="#0C0"><a href="#top">TOP</a></font></div>
 			<br />
-			<br /><font color="#003366" size="+1"><a name="04">企業應用</a></font>
+			<br /><font style="font-family: '微軟正黑體', Calibri" color="#003366"
+				size="+1">企業應用</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
-			<div style="padding-left:150px">
 			<table>
 				<c:forEach items="${SpecialtyList4}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" width="150" height="200"/></th> 
+							<th><img src="${teacher.profPicture}" "width="100" height="100"/></th> 
 							<th>${teacher.profName}<br/>${teacher.profGraduateSchool}<br/>${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
-					<!-- /c:if -->
+						<tr>
+					    <c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
+							<td>
+								<form action="deleteTeacher" method="post">
+									<input type="hidden" name="profID" id="${teacher.profID}" value="${teacher.profID}"></input>
+									<button type = "submit">刪除</button>
+								</form>
+							</td>                                                                     
+						</c:if>
+						</tr>   
 				</c:forEach>
 			</table>
-			</div>
-			<div align="right"><font style="font-family:'微軟正黑體', Calibri" color="#0C0"><a href="#top">TOP</a></font></div>
 			<br />
-			<br /><font color="#003366" size="+1"><a name="05">電子商務</a></font>
+			<br /><font style="font-family: '微軟正黑體', Calibri" color="#003366"
+				size="+1">電子商務</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
-			<div style="padding-left:150px">
 			<table>
 				<c:forEach items="${SpecialtyList5}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" "width="150" height="100"/></th>  
+							<th><img src="${teacher.profPicture}" "width="100" height="100"/></th>  
 							<th>${teacher.profName}<br />${teacher.profGradusteSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
-					<!-- /c:if -->
+						<tr>
+						<c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
+							<td>
+								<form action="deleteTeacher" method="post">
+									<input type="hidden" name="profID" id="${teacher.profID}" value="${teacher.profID}"></input>
+									<button type = "submit">刪除</button>
+								</form>
+							</td>                                                                     
+						</c:if>
+						</tr>	   
 				</c:forEach>
 			</table>
-			</div>
-			<div align="right"><font style="font-family:'微軟正黑體', Calibri" color="#0C0"><a href="#top">TOP</a></font></div>
 			<br />
 			<br />
-			</div>
-			</div>
+
 			</div> <!-- content fin -->
 		</div> <!-- container fin -->
-	<%@include file="../../templete/footer.jsp" %>
+
 </body>
 </html>

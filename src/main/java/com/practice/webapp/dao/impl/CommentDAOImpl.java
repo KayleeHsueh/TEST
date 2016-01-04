@@ -11,11 +11,7 @@ import javax.sql.DataSource;
 
 //import com.mysql.jdbc.Statement;
 import com.practice.webapp.dao.CommentDAO;
-import com.practice.webapp.entity.Account;
 import com.practice.webapp.entity.Comment;
-import com.practice.webapp.entity.Course;
-import com.practice.webapp.entity.Professor;
-import com.practice.webapp.entity.TeacherHMC;
 //import com.practice.webapp.entity.ArticleCategory;
 
 public class CommentDAOImpl implements CommentDAO{
@@ -28,24 +24,23 @@ public class CommentDAOImpl implements CommentDAO{
 		this.dataSource = dataSource;
 	}
 
-	public void insert(Comment comment, Account account, Professor professor, Course course) {
+	public void insert(Comment comment) {
 		// TODO Auto-generated method stub
 		//String sql = "INSERT coursecomment(Cour_ID,Stu_ID,Com_Content,Prof_ID,Com_CourStars) "
 		//		+ "VALUES(?,?,?,?,?)";
-		String sql = "INSERT coursecomment(Cour_ID,Stu_ID,Com_Content,Prof_ID,Com_CourStars) "
-				+ "VALUES(?,?,?,?,?)";
+		String sql = "INSERT coursecomment(Cour_ID,Stu_ID,Com_Content,Com_CourStars) "
+				+ "VALUES(?,?,?,?)";
 		try {
 			System.out.println("123");
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			smt.setInt(1, course.getCourId());//課程規劃傳來的Cour_ID
-			smt.setInt(2, account.getId());//登入的Stu_ID
+			smt.setInt(1, comment.getCourse().getCourId());//課程規劃傳來的Cour_ID
+			smt.setInt(2, comment.getStudent().getStuId());//登入的Stu_ID
 			smt.setString(3, comment.getComContent());
-			smt.setInt(4, professor.getProfId());
-			smt.setInt(5, comment.getCourStars());
+			//smt.setInt(4, comment.getProfessor().getProfId());
+			smt.setInt(4, comment.getCourStars());
 			smt.executeUpdate();			
 			smt.close();
-			System.out.println(comment.getComContent());
  
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -59,18 +54,17 @@ public class CommentDAOImpl implements CommentDAO{
 		}
 	}
 
-	public void delete(Comment comment, Course course) {
+	public void delete(Comment comment) {
 		// TODO Auto-generated method stub
 		String sql = "DELETE FROM coursecomment WHERE Com_ID = ? And Cour_ID=?";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			smt.setInt(1, comment.getComId());
-			smt.setInt(2, course.getCourId());
+			smt.setInt(2, comment.getCourse().getCourId());
 			smt.executeUpdate();			
 			smt.close();
-			System.out.println(comment.getComId());
-			System.out.println(course.getCourId());
+ 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
  
@@ -118,12 +112,11 @@ public class CommentDAOImpl implements CommentDAO{
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			smt.setInt(1, comment.getAddLikes()+1);					
+			smt.setInt(1, comment.getAddLikes());					
 			smt.setInt(2, comment.getComId());
 			smt.executeUpdate();			
 			smt.close();
-			System.out.println(comment.getAddLikes());
-			System.out.println(comment.getComId());
+ 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
  
@@ -137,15 +130,15 @@ public class CommentDAOImpl implements CommentDAO{
 	}
 	
 	
-	public void stateOK(Comment comment, Account account) {//系秘看過且通過
+	public void stateOK(Comment comment) {//系秘看過且通過
 		// TODO Auto-generated method stub
 		String sql = "UPDATE coursecomment SET Com_State=?, Secre_ID=?, Com_Upload_Date=NOW() "
 				+ "WHERE Com_ID =? ";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			smt.setInt(1, 1);			
-			smt.setInt(2, account.getId());
+			smt.setBoolean(1, comment.getComState());			
+			smt.setInt(2, comment.getSecretary().getSecreId());
 			smt.setInt(3, comment.getComId());
 			smt.executeUpdate();			
 			smt.close();
@@ -187,17 +180,14 @@ public class CommentDAOImpl implements CommentDAO{
 		}
 	}
 
-	public List<Comment> getList(Course course) {
+	public List<Comment> getList(Comment comment2) {
 		// TODO Auto-generated method stub
 		List<Comment> commentList = new ArrayList<Comment>();
-		String sql = "SELECT  * FROM coursecomment As A,course As B, student As C, professor As D WHERE A.Cour_ID=B.Cour_ID And A.Stu_ID=C.Stu_ID And A.Prof_ID=D.Prof_ID And A.Cour_ID=? And A.Com_State=1 ORDER BY Com_Likes DESC LIMIT 3";
+		String sql = "SELECT * FROM CourseComment AS A, Course AS B WHERE A.Cour_ID=B.Cour_ID And B.Cour_ID=? And A.Com_State=1 ORDER BY Com_Likes DESC LIMIT 3";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			//smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
-			//smt.setInt(1, 311);
-			smt.setInt(1, course.getCourId());
-			
+			smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
 			rs = smt.executeQuery();
 			while(rs.next()){
 				Comment comment = new Comment();
@@ -213,7 +203,6 @@ public class CommentDAOImpl implements CommentDAO{
 				//comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
 				//comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
 				commentList.add(comment);
-				System.out.println(course.getCourId());
 			}
 			rs.close();
 			smt.close();
@@ -231,23 +220,20 @@ public class CommentDAOImpl implements CommentDAO{
 		return commentList;
 	}
 	
-	public List<Comment> getListOthersComment(Course course) {
+	public List<Comment> getListOthersComment(Comment comment2) {
 		// TODO Auto-generated method stub
 		List<Comment> commentListOthersComment = new ArrayList<Comment>();
-		String sql = "SELECT  * FROM coursecomment As A,course As B, student As C, professor As D "
-				+ "WHERE A.Cour_ID=B.Cour_ID  And A.Stu_ID=C.Stu_ID And A.Prof_ID=D.Prof_ID And A.Cour_ID=? And A.Com_State=1 "
+		String sql = "SELECT  * FROM coursecomment As A,course As B"
+				+ "WHERE A.Cour_ID=B.Cour_ID And B.Cour_ID=? And A.Com_State=1"
 				+ "ORDER BY Com_Likes DESC";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);			
-			smt.setInt(1, course.getCourId());//課程規劃傳來的Cour_ID
+			smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
 			rs = smt.executeQuery();
 			while(rs.next()){
 				Comment comment = new Comment();
-				//Course course2=new Course();
-				//course2.setCourId(course.getCourId());
-				comment.getCourse().setCourId(rs.getInt("Cour_ID"));
-				System.out.println("Course ID= "+rs.getInt("Cour_ID"));
+				
 				comment.getStudent().setStuId(rs.getInt("Stu_ID"));
 				comment.getStudent().setStuClass(rs.getString("Stu_Class"));
 				comment.getStudent().setStuName(rs.getString("Stu_Name"));
@@ -260,7 +246,6 @@ public class CommentDAOImpl implements CommentDAO{
 				comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
 				//comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
 				commentListOthersComment.add(comment);
-				System.out.println("GetOtherCOmment"+rs.getInt("Com_Likes"));
 			}
 			rs.close();
 			smt.close();
@@ -278,18 +263,20 @@ public class CommentDAOImpl implements CommentDAO{
 		return commentListOthersComment;
 	}
 
-	public Comment getListMyComment(Course course, Account account) {
+	public List<Comment> getListMyComment(Comment comment2) {
 		// TODO Auto-generated method stub
-		String sql = "SELECT  * FROM coursecomment As A,course As B, student As C, professor As D "
-				+ "WHERE A.Cour_ID=B.Cour_ID  And A.Stu_ID=C.Stu_ID And A.Prof_ID=D.Prof_ID And A.Cour_ID=? And A.Stu_ID=?";
-		Comment comment = new Comment();
+		List<Comment> commentListMyComment = new ArrayList<Comment>();
+		String sql = "SELECT  * FROM coursecomment "
+				+ "WHERE Cour_ID=? And Stu_ID=? ";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			smt.setInt(1, course.getCourId());//課程規劃傳來的Cour_ID
-			smt.setInt(2, account.getId());
+			smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
+			smt.setInt(2, comment2.getStudent().getStuId());
 			rs = smt.executeQuery();
-			if(rs.next()){
+			while(rs.next()){
+				Comment comment = new Comment();
+				
 				comment.getStudent().setStuId(rs.getInt("Stu_ID"));
 				comment.getStudent().setStuClass(rs.getString("Stu_Class"));
 				comment.getStudent().setStuName(rs.getString("Stu_Name"));
@@ -298,13 +285,11 @@ public class CommentDAOImpl implements CommentDAO{
 				comment.getProfessor().setProfName(rs.getString("Prof_Name"));
 				comment.setComLikes(rs.getInt("Com_Likes"));
 				comment.setCourStars(rs.getInt("Com_CourStars"));
-				comment.setComState(rs.getInt("Com_State"));
+				//comment.setComState(rs.getBoolean("Com_State"));
 				comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
-				comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
-				System.out.println("Is there anyone?");
+				//comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
+				commentListMyComment.add(comment);
 			}
-			System.out.println("Course Id: "+course.getCourId());
-			System.out.println("My school Id:"+account.getId() );
 			rs.close();
 			smt.close();
  
@@ -318,19 +303,18 @@ public class CommentDAOImpl implements CommentDAO{
 				} catch (SQLException e) {}
 			}
 		}
-		return comment;
+		return commentListMyComment;
 	}
-
 	
-	public List<Comment> getListSecretaryCheck() {     ///////Yilin
+	public List<Comment> getListSecretaryCheck(Comment comment2) {
 		// TODO Auto-generated method stub
 		List<Comment> commentListSecretaryCheck = new ArrayList<Comment>();
-		String sql = "SELECT  * FROM coursecomment As A,course As B, student As C, professor As D"
-				+ " WHERE A.Cour_ID=B.Cour_ID  And A.Stu_ID=C.Stu_ID And A.Prof_ID=D.Prof_ID And A.Com_Content is not null And A.Secre_ID is null";
+		String sql = "SELECT  * FROM coursecomment "
+				+ "WHERE Cour_ID=? And Com_Content is not null And Secre_ID is null";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			//smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
+			smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
 			//smt.setInt(2, comment2.getStudent().getStuId());
 			rs = smt.executeQuery();
 			while(rs.next()){
@@ -344,8 +328,7 @@ public class CommentDAOImpl implements CommentDAO{
 				comment.getProfessor().setProfName(rs.getString("Prof_Name"));
 				comment.setComLikes(rs.getInt("Com_Likes"));
 				comment.setCourStars(rs.getInt("Com_CourStars"));
-				comment.setComState(rs.getInt("Com_State"));
-				comment.getCourse().setCourName(rs.getString("Cour_Name"));
+				comment.setComState(rs.getBoolean("Com_State"));
 				//comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
 				//comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
 				commentListSecretaryCheck.add(comment);
@@ -366,20 +349,20 @@ public class CommentDAOImpl implements CommentDAO{
 		return commentListSecretaryCheck;
 	}
 	
-	public List<Comment> getListPassComment() {     ///////Yilin
+	public List<Comment> getListPassComment(Comment comment2) {
 		// TODO Auto-generated method stub
 		List<Comment> commentListPassComment = new ArrayList<Comment>();
-		String sql = "SELECT  * FROM coursecomment As A,course As B, student As C, professor As D"
-				+ " WHERE  A.Cour_ID=B.Cour_ID  And A.Stu_ID=C.Stu_ID And A.Prof_ID=D.Prof_ID And A.Com_State=1 And A.Secre_ID is not null";
+		String sql = "SELECT  * FROM coursecomment "
+				+ "WHERE Cour_ID=? And Cour_State=1 And Secre_ID is not null";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			//smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
+			smt.setInt(1, comment2.getCourse().getCourId());//課程規劃傳來的Cour_ID
 			//smt.setInt(2, comment2.getStudent().getStuId());
 			rs = smt.executeQuery();
 			while(rs.next()){
 				Comment comment = new Comment();
-				System.out.println(rs.getInt("Cour_ID"));
+				
 				comment.getStudent().setStuId(rs.getInt("Stu_ID"));
 				comment.getStudent().setStuClass(rs.getString("Stu_Class"));
 				comment.getStudent().setStuName(rs.getString("Stu_Name"));
@@ -388,10 +371,8 @@ public class CommentDAOImpl implements CommentDAO{
 				comment.getProfessor().setProfName(rs.getString("Prof_Name"));
 				comment.setComLikes(rs.getInt("Com_Likes"));
 				comment.setCourStars(rs.getInt("Com_CourStars"));
-				comment.setComState(rs.getInt("Com_State"));
+				//comment.setComState(rs.getBoolean("Com_State"));
 				comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
-				comment.getCourse().setCourId(rs.getInt("Cour_ID"));
-				comment.getCourse().setCourName(rs.getString("Cour_Name"));
 				//comment.getSecretary().setSecreId(rs.getInt("Secre_ID"));
 				commentListPassComment.add(comment);
 			}
@@ -410,42 +391,6 @@ public class CommentDAOImpl implements CommentDAO{
 		}
 		return commentListPassComment;
 	}
-	
-	public List<TeacherHMC> getTeacherList(Course course) {     ///////Yilin
-		// TODO Auto-generated method stub
-		List<TeacherHMC> teacherList = new ArrayList<TeacherHMC>();
-		String sql = "SELECT * FROM teacherteachmanycourse AS A , professor AS B WHERE A.Cour_ID=? And A.prof_ID=B.prof_ID";
-		try {
-			conn = dataSource.getConnection();
-			smt = conn.prepareStatement(sql);
-			smt.setInt(1, course.getCourId());//課程規劃傳來的Cour_ID
-			//smt.setInt(2, comment2.getStudent().getStuId());
-			rs = smt.executeQuery();
-			while(rs.next()){
-				TeacherHMC teacherHMC= new TeacherHMC();
-				System.out.println(rs.getInt("Cour_ID"));
-				teacherHMC.getProfessor().setProfName(rs.getString("Prof_Name"));
-				teacherHMC.getProfessor().setProfId(rs.getInt("Prof_ID"));
-				teacherList.add(teacherHMC);
-				System.out.println("Professor ID: "+rs.getInt("Prof_ID"));
-			}
-			rs.close();
-			smt.close();
- 
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
- 
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
-		}
-		return teacherList;
-	}
-
-
 
 	public Comment get(Comment comment) {///influence CommentDAOImpl, the type must implement the  
 ///inherited abstract method CommentDAO.get(Comment)
@@ -460,7 +405,7 @@ public class CommentDAOImpl implements CommentDAO{
 				comment.setComContent(rs.getString("Com_Content"));
 				comment.setComLikes(rs.getInt("Com_Likes"));
 				comment.setCourStars(rs.getInt("Com_CourStars"));
-				comment.setComState(rs.getInt("Com_State"));
+				comment.setComState(rs.getBoolean("Com_State"));
 				comment.setComUploadDate(rs.getDate("Com_Upload_Date"));
 				comment.getCourse().setCourId(rs.getInt("Cour_ID"));
 				comment.getStudent().setStuId(rs.getInt("Stu_ID"));

@@ -1,8 +1,11 @@
 package com.practice.webapp.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,35 +29,45 @@ public class QAController {
 	public ModelAndView getQA(@ModelAttribute Account account){
 		ModelAndView model=new ModelAndView("Q&A");
 		account = (Account)context.getBean("account");
-		System.out.println(account.getIdentity()+"HAHAHA");
 		if(account.getIdentity()!=null/*||account.getIdentity()==""*/){
 			if(account.getIdentity().equals("secretary")){
 				model=new ModelAndView("Question_ans");
-			}else{
-				QA qa=(QA)context.getBean("qa");
 				QADAO qaDAO = (QADAO)context.getBean("qaDAO");
+				//qa-b
+				List<QA> trueList = new ArrayList<QA>();
+				trueList = qaDAO.getTrueList();
+				model.addObject("waitingList", trueList);
+				//qa-c
+				List<QA> falseList = new ArrayList<QA>();
+				falseList = qaDAO.getFalseList();
+				model.addObject("finList", falseList);
+				}
+			}
+			else{
+				model=new ModelAndView("Q&A");
+				QADAO qaDAO = (QADAO)context.getBean("qaDAO");
+				System.out.println("hi");
 				List<QA> qaList = new ArrayList<QA>();
 				qaList = qaDAO.getProblemSetTrueList();
-				model.addObject("qaList", qaList);
+				model.addObject("usualList", qaList);
 			}
-		}
 		return model;
 	}
-	
-	
+
+	//insert QA
 	@RequestMapping(value = "/Question", method = RequestMethod.GET)
 	public ModelAndView insertQA(){
 		ModelAndView model = new ModelAndView("Question");
-		QuestionCategoryDAO QuestionCategoryDAO = (QuestionCategoryDAO)context.getBean("QuestionCategoryDAO");
-		List<QuestionCategory> QuestionCategoryList = new ArrayList<QuestionCategory>();
-		QuestionCategoryList = QuestionCategoryDAO.getList();
-		model.addObject("QuestionCategoryList", QuestionCategoryList);
+		QuestionCategoryDAO questionCategoryDAO = (QuestionCategoryDAO)context.getBean("questionCategoryDAO");
+		List<QuestionCategory> questionCategoryList = new ArrayList<QuestionCategory>();
+		questionCategoryList = questionCategoryDAO.getList();
+		model.addObject("questionCategoryList", questionCategoryList);
 		return model;
 	}
 	
 	@RequestMapping(value = "/Question", method = RequestMethod.POST)
 	public ModelAndView insertArticle(@ModelAttribute QA qa){
-		ModelAndView model = new ModelAndView("redirect:/Question");
+		ModelAndView model = new ModelAndView("redirect:/Q&A");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
 		qaDAO.insert(qa);
 		
@@ -71,28 +84,30 @@ public class QAController {
 		return model;
 	}
 	//待回答問題
-	@RequestMapping(value = "/Question_ans", method = RequestMethod.GET)
+	@RequestMapping(value = "/QA-b", method = RequestMethod.GET)
 	public ModelAndView getTrueList(){
 		ModelAndView model = new ModelAndView("Question_ans");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
-		List<QA> qaList = new ArrayList<QA>();
-		qaList = qaDAO.getTrueList();
-		model.addObject("waitingList", qaList);
+		List<QA> trueList = new ArrayList<QA>();
+		System.out.println("hello");
+		trueList = qaDAO.getTrueList();
+		model.addObject("waitingList", trueList);
 		return model;
 	}
 	//已回答問題
-	@RequestMapping(value = "/Question_ans-2", method = RequestMethod.GET)
+	@RequestMapping(value = "/QA-c", method = RequestMethod.GET)
 	public ModelAndView getFalseList(){
-		ModelAndView model = new ModelAndView("Question_ans-2");
+		ModelAndView model = new ModelAndView("Question_ans");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
-		List<QA> qaList = new ArrayList<QA>();
-		qaList = qaDAO.getFalseList();
-		model.addObject("finList", qaList);
+		List<QA> falseList = new ArrayList<QA>();
+		falseList = qaDAO.getFalseList();
+		model.addObject("finList", falseList);
 		return model;
 	}
 	@RequestMapping(value = "/updateQA", method = RequestMethod.GET)
 	public ModelAndView updateQAPage(@ModelAttribute QA qa){
 		ModelAndView model = new ModelAndView("Question_ans");
+		System.out.println("hohoho");
 		QuestionCategoryDAO QuestionCategoryDAO = (QuestionCategoryDAO)context.getBean("QuestionCategoryDAO");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
 		List<QuestionCategory> QuestionCategoryList = new ArrayList<QuestionCategory>();
@@ -105,7 +120,7 @@ public class QAController {
 	
 	@RequestMapping(value = "/updateQA", method = RequestMethod.POST)
 	public ModelAndView updateQA(@ModelAttribute QA qa){
-		ModelAndView model = new ModelAndView("redirect:/Question_ans");
+		ModelAndView model = new ModelAndView("redirect:/Q&A");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
 		qaDAO.update(qa);
 		
@@ -114,7 +129,7 @@ public class QAController {
 	
 	@RequestMapping(value = "/deleteQA", method = RequestMethod.POST)
 	public ModelAndView deleteQA(@ModelAttribute QA qa){
-		ModelAndView model = new ModelAndView("redirect:/Question_ans");
+		ModelAndView model = new ModelAndView("redirect:/Q&A");
 		QADAO qaDAO = (QADAO)context.getBean("qaDAO");
 		qaDAO.delete(qa);
 		

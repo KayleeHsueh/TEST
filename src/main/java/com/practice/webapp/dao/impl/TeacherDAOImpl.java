@@ -28,6 +28,7 @@ public class TeacherDAOImpl implements TeacherDAO{
 		// Add Teacher
 	    String sql = "INSERT INTO professor(Prof_Name, Prof_Picture, Prof_GraduateSchool, Prof_GraduateDepartment, Prof_Degree) VALUES(?, ?, ?, ?, ?)";	
 		try {
+			System.out.println("hi");
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			smt.setString(1, aTeacher.getProfName());
@@ -49,43 +50,43 @@ public class TeacherDAOImpl implements TeacherDAO{
 		}
 		
 		// Add Professor Specialty
-		for (int i =0; i<= aTeacher.getProfSpeName().size(); i++)
-		{
-		//	Check professorspecialty exist ?
-		sql = "SELECT ProfSpe_ID FROM professorspecialty WHERE ProfSpe_Name = ?";
-		try {
-			conn = dataSource.getConnection();
-			smt = conn.prepareStatement(sql);
-			// Choose i'st Professor Specialty
-			smt.setString(1, aTeacher.getProfSpeName().get(i));
-			rs = smt.executeQuery();
-			// IF professorspecialty not exist
-			if (rs.getRow() == 0)
-			{
-				// INSERT professorspecialty
-				sql = "INSERT INTO professorspecialty(ProfSpe_Name) VALUES(?)";
-			    smt = conn.prepareStatement(sql);
-			    smt.setString(1, aTeacher.getProfSpeName().get(i));
-			    smt.executeUpdate();
-			}
-			rs.close();
-			smt.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
- 
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
-		}
-		}
+//		for (int i =0; i< aTeacher.getProfSpeName().size(); i++)
+//		{
+//		//	Check professorspecialty exist ?
+//		sql = "SELECT ProfSpe_ID FROM professorspecialty WHERE ProfSpe_Name = ?";
+//		try {
+//			conn = dataSource.getConnection();
+//			smt = conn.prepareStatement(sql);
+//			// Choose i'st Professor Specialty
+//			smt.setString(1, aTeacher.getProfSpeName().get(i));
+//			rs = smt.executeQuery();
+//			// IF professorspecialty not exist
+//			if (rs.getRow() == 0)
+//			{
+//				// INSERT professorspecialty
+//				sql = "INSERT INTO professorspecialty(ProfSpe_Name) VALUES(?)";
+//			    smt = conn.prepareStatement(sql);
+//			    smt.setString(1, aTeacher.getProfSpeName().get(i));
+//			    smt.executeUpdate();
+//			}
+//			rs.close();
+//			smt.close();
+//		} catch (SQLException e) {
+//			throw new RuntimeException(e);
+// 
+//		} finally {
+//			if (conn != null) {
+//				try {
+//					conn.close();
+//				} catch (SQLException e) {}
+//			}
+//		}
+//		}
 		
 		// Add professorhasmanyspecialty
-		for (int i =0; i<= aTeacher.getProfSpeName().size(); i++)
+		for (int i =0; i< aTeacher.getProfSpeName().size(); i++)
 		{
-		sql = "SELECT ProfSpe_ID, Prof_ID From professor, professorspecialty WHERE ProfSpe_Name = ? AND Prof_Name = ?";
+		sql = "SELECT ProfSpe_ID, Prof_ID From professor, professorspecialty WHERE ProfSpe_Name = N? AND Prof_Name = N? ";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
@@ -93,11 +94,12 @@ public class TeacherDAOImpl implements TeacherDAO{
 			smt.setString(2, aTeacher.getProfName());
 			rs = smt.executeQuery();
 			while(rs.next()){
+				System.out.println("name" + aTeacher.getProfName());
 				// INSERT professorhasmanyspecialty
 				sql = "INSERT INTO professorhasmanyspecialty(ProfSpe_ID, Prof_ID) VALUES(?, ?)";
 			    smt = conn.prepareStatement(sql);
-			    smt.setInt(1, rs.getInt("profSpeID"));
-			    smt.setInt(2, rs.getInt("profID"));
+			    smt.setInt(1, rs.getInt("ProfSpe_ID"));
+			    smt.setInt(2, rs.getInt("Prof_ID"));
 			    smt.executeUpdate();
 			}
 			rs.close();
@@ -119,27 +121,23 @@ public class TeacherDAOImpl implements TeacherDAO{
 	public void delete(Teacher aTeacher) {
 		
 		//  SELECT Prof_ID
-		String sql = "SELECT Prof_ID From professor WHERE Prof_Name = ?";
+		String sql = "";
 		try {
+			System.out.println("chuchu1");
 			conn = dataSource.getConnection();
-			smt = conn.prepareStatement(sql);
-			smt.setString(1, aTeacher.getProfName());
-			rs = smt.executeQuery();
-			while(rs.next()){
 				// Delete professor
-				sql = "DELETE FROM professor WHERE Prof_ID = ?";
+				sql = "DELETE FROM professor WHERE Prof_ID = ?";	
 			    smt = conn.prepareStatement(sql);
-			    smt.setInt(1, rs.getInt("profID"));
+			    smt.setInt(1, aTeacher.getProfID());
 			    smt.executeUpdate();
 			    
 			    // Delete professorhasmanyspecialty
 				sql = "DELETE FROM professorhasmanyspecialty WHERE Prof_ID = ?";
 			    smt = conn.prepareStatement(sql);
-			    smt.setInt(1, rs.getInt("profID"));
+			    smt.setInt(1,aTeacher.getProfID());
 			    smt.executeUpdate();
-			}
-			rs.close();
-			smt.close();
+			    smt.close();
+			    
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
  
@@ -149,8 +147,7 @@ public class TeacherDAOImpl implements TeacherDAO{
 					conn.close();
 				} catch (SQLException e) {}
 			}
-		}
-		
+		}		
 	}
 
 	/* public void update(Product aProduct) {
@@ -201,14 +198,13 @@ public class TeacherDAOImpl implements TeacherDAO{
 	}
 	public List<Teacher> getSpecialtyList(int profSpeID) {
 		List<Teacher> SpecialtyList = new ArrayList<Teacher>();
-		String sq1= "SELECT professor.Prof_Name AS Prof_Name, professor.Prof_Picture AS Prof_Picture, professor.Prof_GraduateSchool AS Prof_GraduateSchool, professor.Prof_GraduateDepartment AS Prof_GraduateDepartment, professor.Prof_Degree AS Prof_Degree FROM professor, professorspecialty, professorhasmanyspecialty WHERE professorspecialty.ProfSpe_ID = ? AND professorhasmanyspecialty.ProfSpe_ID = ? AND professor.Prof_ID = professorhasmanyspecialty.Prof_ID";
-			try {
+		String sq1= "SELECT professor.Prof_ID AS Prof_ID, professor.Prof_Name AS Prof_Name, professor.Prof_Picture AS Prof_Picture, professor.Prof_GraduateSchool AS Prof_GraduateSchool, professor.Prof_GraduateDepartment AS Prof_GraduateDepartment, professor.Prof_Degree AS Prof_Degree FROM professor, professorspecialty, professorhasmanyspecialty WHERE professorspecialty.ProfSpe_ID = ? AND professorhasmanyspecialty.ProfSpe_ID = ? AND professor.Prof_ID = professorhasmanyspecialty.Prof_ID";
+			try { 
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sq1);
 			smt.setInt(1,profSpeID);
 			smt.setInt(2,profSpeID);
 			rs = smt.executeQuery();
-		//	System.out.println("HEHE");
 			while(rs.next()){
 				Teacher aTeacher = new Teacher();
 				aTeacher.setProfName(rs.getString("Prof_Name"));			
@@ -216,7 +212,7 @@ public class TeacherDAOImpl implements TeacherDAO{
 				aTeacher.setProfGraduateSchool(rs.getString("Prof_GraduateSchool"));
 				aTeacher.setProfGraduateDepartment(rs.getString("Prof_GraduateDepartment"));
 				aTeacher.setProfDegree(rs.getString("Prof_Degree"));
-				
+				aTeacher.setProfID(rs.getInt("Prof_ID"));
 				SpecialtyList.add(aTeacher);
 				
 			}

@@ -14,21 +14,18 @@ public class Account implements java.io.Serializable {
 	 * serialVersionUID is generated automatically
 	 */
 	private static final long serialVersionUID = 3476619468809859762L;
-	private String userName;
+	private String username;
 	private String password;
 	private String identity;
-	private int id;
+	private String schoolID;
 	private String className;
 	private boolean isLogin;
-	private String companyName;
-	private String position;
-	private String picture;
 
-	public void setUserName(String userName){
-		this.userName = userName;
+	public void setUsername(String username){
+		this.username = username;
 	}
-	public String getUserName(){
-		return userName;
+	public String getUsername(){
+		return username;
 	}
 
 	public void setPassword(String password){
@@ -44,6 +41,12 @@ public class Account implements java.io.Serializable {
 	public String getIdentity(){
 		return identity;
 	}
+	public void setSchoolID(String schoolID){
+		this.schoolID=schoolID;
+	}
+	public String getSchoolID(){
+		return schoolID;
+	}
 	public void setClassName(String className){
 		this.className=className;
 	}
@@ -55,29 +58,5 @@ public class Account implements java.io.Serializable {
 	}
 	public void setIsLogin(boolean isLogin) {
 		this.isLogin = isLogin;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getCompanyName() {
-		return companyName;
-	}
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
-	public String getPosition() {
-		return position;
-	}
-	public void setPosition(String position) {
-		this.position = position;
-	}
-	public String getPicture() {
-		return picture;
-	}
-	public void setPicture(String picture) {
-		this.picture = picture;
 	}
 }

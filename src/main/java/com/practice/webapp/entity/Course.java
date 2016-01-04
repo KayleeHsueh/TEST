@@ -6,12 +6,11 @@ public class Course {
 	private int courId;
 	private String courName;
 	private CourseCate courseCate=new CourseCate();
-	private int courSemester;
 	private int courStars;
 	private String courObligatory;
 	private String courBlockCourID;
 	private String courBriefIntro;
-	
+	//private ArticleCategory articleCategory = new ArticleCategory();
 	public int getCourId() {
 		return courId;
 	}
@@ -30,13 +29,6 @@ public class Course {
 	public void setCourseCate(CourseCate courseCate) {
 		this.courseCate = courseCate;
 	}
-	public int getCourSemester() {
-		return courSemester;
-	}
-	public void setCourSemester(int courSemester) {
-		this.courSemester = courSemester;
-	}
-	
 	public int getCourStars() {
 		return courStars;
 	}

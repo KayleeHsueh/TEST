@@ -22,36 +22,24 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<bean id="CourseDAO" class="com.practice.webapp.dao.impl.CourseDAOImpl">
+	<bean id="Course1DAO" class="com.practice.webapp.dao.impl.Course1DAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="qa" class="com.practice.webapp.entity.QA" scope="session">
+		<aop:scoped-proxy/>
+    </bean>
+	
+	<bean id="qaDAO" class="com.practice.webapp.dao.impl.QADAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="questionCategoryDAO" class="com.practice.webapp.dao.impl.QuestionCategoryDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<bean id="teacherDAO" class="com.practice.webapp.dao.impl.TeacherDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<bean id="GraduateDAO" class="com.practice.webapp.dao.impl.GraduateDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="ProjectDAO" class="com.practice.webapp.dao.impl.ProjectDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="ResourceAndIntroPictureDAO" class="com.practice.webapp.dao.impl.ResourceAndIntroPictureDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="qaDAO" class="com.practice.webapp.dao.impl.QADAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	
-	<bean id="QuestionCategoryDAO" class="com.practice.webapp.dao.impl.QuestionCategoryDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	
 
 
   	<bean id="account" class="com.practice.webapp.entity.Account" scope="session">
@@ -62,9 +50,7 @@
 		<aop:scoped-proxy/>
     </bean>
     
-    <bean id="qa" class="com.practice.webapp.entity.Account" scope="session">
-		<aop:scoped-proxy/>
-    </bean>
+
     
     <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
     <property name="scopes">

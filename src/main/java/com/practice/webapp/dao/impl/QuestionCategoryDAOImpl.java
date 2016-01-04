@@ -24,17 +24,17 @@ public class QuestionCategoryDAOImpl implements QuestionCategoryDAO{
 
 	public List<QuestionCategory> getList() {
 		// TODO Auto-generated method stub
-		List<QuestionCategory> QuestionCategoryList = new ArrayList<QuestionCategory>();
+		List<QuestionCategory> questionCategoryList = new ArrayList<QuestionCategory>();
 		String sql = "SELECT * FROM questioncategory";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			rs = smt.executeQuery();
 			while(rs.next()){
-				QuestionCategory QuestionCategory = new QuestionCategory();
-				QuestionCategory.setQCate_ID(rs.getInt("QCate_ID"));
-				QuestionCategory.setQCate_Name(rs.getString("QCate_Name"));
-				QuestionCategoryList.add(QuestionCategory);
+				QuestionCategory questionCategory = new QuestionCategory();
+				questionCategory.setqCate_ID(rs.getInt("QCate_ID"));
+				questionCategory.setqCate_Name(rs.getString("QCate_Name"));
+				questionCategoryList.add(questionCategory);
 			}
 			rs.close();
 			smt.close();
@@ -49,7 +49,7 @@ public class QuestionCategoryDAOImpl implements QuestionCategoryDAO{
 				} catch (SQLException e) {}
 			}
 		}
-		return QuestionCategoryList;
+		return questionCategoryList;
 	}
 	
 }

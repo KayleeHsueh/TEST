@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Teacher {
+	private int profID;
     private String profName;
     private List<String> profSpeName = new ArrayList<String>();
     private String profPicture;
@@ -47,6 +48,12 @@ public class Teacher {
 	}
 	public void setProfDegree(String profDegree) {
 		this.profDegree = profDegree;
+	}
+	public int getProfID() {
+		return profID;
+	}
+	public void setProfID(int profID) {
+		this.profID = profID;
 	}
     
     /* SELECT COLUMN */

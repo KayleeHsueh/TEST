@@ -1,71 +1,69 @@
 package com.practice.webapp.entity;
 
-import java.net.PasswordAuthentication;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
-import java.io.*;
-import java.util.*;
 import java.util.Date;
 
 public class QA {
-	private int Question_ID;
-	private String Question_Content;
-	private String Asker_Name;
-	private String Asker_Email;
-	private String Answer_Content;
-	private boolean ProblemSet;
-	private Date Upload_Date;
-	private QuestionCategory questioncategory = new QuestionCategory();
+	private int question_ID;
+	private String question_Content;
+	private String asker_Name;
+	private String asker_Email;
+	private String answer_Content;
+	private boolean problemSet;
+	private Date upload_Date;
+	private QuestionCategory questionCategory = new QuestionCategory();
 	
 	
+	
+	
+	public QuestionCategory getQuestionCategory() {
+		return questionCategory;
+	}
+	public void setQuestionCategory(QuestionCategory questionCategory) {
+		this.questionCategory = questionCategory;
+
+	
+	}
 	public int getQuestion_ID() {
-		return Question_ID;
+		return question_ID;
 	}
-	public void setQuestion_ID(int Question_ID) {
-		this.Question_ID = Question_ID;
-	}
-	public String getAsker_Name() {
-		return Asker_Name;
-	}
-	public void setAsker_Name(String Asker_Name) {
-		this.Asker_Name = Asker_Name;
-	}
-	public String getAsker_Email() {
-		return Asker_Email;
-	}
-	public void setAsker_Email(String Asker_Email) {
-		this.Asker_Email = Asker_Email;
+	public void setQuestion_ID(int question_ID) {
+		this.question_ID = question_ID;
 	}
 	public String getQuestion_Content() {
-		return Question_Content;
+		return question_Content;
 	}
-	public void setQuestion_Content(String Question_Content) {
-		this.Question_Content = Question_Content;
+	public void setQuestion_Content(String question_Content) {
+		this.question_Content = question_Content;
+	}
+	public String getAsker_Name() {
+		return asker_Name;
+	}
+	public void setAsker_Name(String asker_Name) {
+		this.asker_Name = asker_Name;
+	}
+	public String getAsker_Email() {
+		return asker_Email;
+	}
+	public void setAsker_Email(String asker_Email) {
+		this.asker_Email = asker_Email;
 	}
 	public String getAnswer_Content() {
-		return Answer_Content;
+		return answer_Content;
 	}
-	public void setAnswer_Content(String Answer_Content) {
-		this.Answer_Content = Answer_Content;
+	public void setAnswer_Content(String answer_Content) {
+		this.answer_Content = answer_Content;
+	}
+	public boolean isProblemSet() {
+		return problemSet;
+	}
+	public void setProblemSet(boolean problemSet) {
+		this.problemSet = problemSet;
 	}
 	public Date getUpload_Date() {
-		return 	Upload_Date;
+		return upload_Date;
 	}
-	public void setUpload_Date(Date Upload_Date) {
-		this.Upload_Date = Upload_Date;
+	public void setUpload_Date(Date upload_Date) {
+		this.upload_Date = upload_Date;
 	}
-	public QuestionCategory getQuestionCategory() {
-		return questioncategory;
-	}
-	public void setQuestionCategory(QuestionCategory questioncategory) {
-		this.questioncategory = questioncategory;
-	}	
-	public boolean getProblemSet() {
-		return ProblemSet;
-	}
-	public void setProblemSet(boolean ProblemSet) {
-		this.ProblemSet = ProblemSet;
-	}
-	
 }

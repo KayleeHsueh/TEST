@@ -1,20 +1,23 @@
 package com.practice.webapp.entity;
 
 public class QuestionCategory {
-	private int QCate_ID;
-	private String QCate_Name;
-	public int getQCate_ID() {
-		return QCate_ID;
+	private int qCate_ID;
+	private String qCate_Name;
+	
+
+	public String getqCate_Name() {
+		return qCate_Name;
 	}
-	public void setQCate_ID(int QCate_ID) {
-		this.QCate_ID = QCate_ID;
+	public void setqCate_Name(String qCate_Name) {
+		this.qCate_Name = qCate_Name;
 	}
-	public String getQCate_Name() {
-		return QCate_Name;
+	public int getqCate_ID() {
+		return qCate_ID;
 	}
-	public void setQCate_Name(String QCate_Name) {
-		this.QCate_Name = QCate_Name;
+	public void setqCate_ID(int qCate_ID) {
+		this.qCate_ID = qCate_ID;
 	}
+
 	
 	
 }

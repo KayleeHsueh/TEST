@@ -1,7 +1,6 @@
 package com.practice.webapp.dao.impl;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,23 +8,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
-import java.io.*;
-import java.util.*;
-import java.util.Date;
 
 import javax.sql.DataSource;
-import javax.websocket.Session;
+
 
 //import com.mysql.jdbc.Statement;
 import com.practice.webapp.dao.QADAO;
 import com.practice.webapp.entity.QA;
+import com.practice.webapp.entity.QuestionCategory;
 //import com.practice.webapp.entity.ArticleCategory;
 
-import java.io.File;
+
 import java.text.MessageFormat;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -37,11 +31,6 @@ public class QADAOImpl implements QADAO{
 	private PreparedStatement smt = null ;
 	
 	
-	String mailsever = "gmail.com";
-	String From = "winterhan10@gmail.com";
-	
-	String Subject = "輔大資管系問題相關回復，請查看";
-	
 	boolean sessionDebug = false;
 	
 	boolean Send_Status = false;
@@ -52,13 +41,13 @@ public class QADAOImpl implements QADAO{
 	//Ask the Question
 	public void insert(QA qa) {
 		// TODO Auto-generated method stub
-		String sql = "INSERT qa(Asker_Name, Asker_Email, QCate_ID,Question_Content,Upload_Date)" + "VALUES(?,?,?,?,NOW())";
+		String sql = "INSERT qa(Asker_Name, Asker_Email, QCate_ID, Question_Content, Upload_Date)" + "VALUES(?,?,?,?,NOW())";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			smt.setString(1, qa.getAsker_Name());
 			smt.setString(2, qa.getAsker_Email());
-			smt.setInt(3, qa.getQuestionCategory().getQCate_ID());
+			smt.setInt(3, qa.getQuestionCategory().getqCate_ID());
 			smt.setString(4, qa.getQuestion_Content());
 			smt.executeUpdate();			
 			smt.close();
@@ -77,8 +66,8 @@ public class QADAOImpl implements QADAO{
 	
 	public void delete(QA qa) {
 		// TODO Auto-generated method stub
-		String sql = "DELETE FROM qa WHERE Question_ID = ?";
-		try {
+		String sql = "DELETE FROM qa WHERE Question_ID= ?";
+		try{
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			smt.setInt(1, qa.getQuestion_ID());
@@ -99,45 +88,15 @@ public class QADAOImpl implements QADAO{
 	//Answer the Question
 	public void update(QA qa) {
 		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM qa a WHERE QCate_ID=?";
-		try {
-			conn = dataSource.getConnection();
-			smt = conn.prepareStatement(sql);
-			smt.setInt(1, qa.getQuestionCategory().getQCate_ID());
-			rs = smt.executeQuery();
-			while(rs.next()){
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
-				qa.setAsker_Name(rs.getString("Asker_Name"));
-				qa.setAsker_Email(rs.getString("Asker_Email"));
-				qa.setQuestion_Content(rs.getString("Question_Content"));
-				qa.setAnswer_Content(rs.getString("Answer_Content"));
-				qa.setUpload_Date(rs.getDate("Upload_Date"));
-			}
-			rs.close();
-			smt.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
- 
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {}
-			}
-		}
-		
-		sql = "UPDATE qa SET QCate_ID=?, Answer_Content=?, ProblemSet=?, Upload_Date=NOW() "
+		String sql = "UPDATE qa SET Answer_Content=?, ProblemSet=?, Upload_Date=NOW() "
 				+ "WHERE Question_ID = ?";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
-			smt.setInt(1, qa.getQuestionCategory().getQCate_ID());
-			smt.setString(2, qa.getAnswer_Content());
-			smt.setBoolean(3, qa.getProblemSet());
-			smt.setInt(4, qa.getQuestion_ID());
+			smt.setString(1, qa.getAnswer_Content());
+			smt.setBoolean(2, qa.isProblemSet());
+			smt.setInt(3, qa.getQuestion_ID());
 			smt.executeUpdate();	
-			doSendMail(qa.getAsker_Name(),qa.getAsker_Email(),qa.getQuestion_Content(),qa.getAnswer_Content());
 			
 			smt.close();
  
@@ -152,21 +111,52 @@ public class QADAOImpl implements QADAO{
 			}
 		}
 		
+		sql = "SELECT * FROM qa a WHERE Question_ID=?";//To get asker info
+		try {
+			conn = dataSource.getConnection();
+			smt = conn.prepareStatement(sql);
+			smt.setInt(1, qa.getQuestion_ID());
+			rs = smt.executeQuery();
+			while(rs.next()){
+				System.out.println("hihihi");
+				qa.getQuestionCategory().setqCate_ID(rs.getInt("QCate_ID"));
+				qa.setAsker_Name(rs.getString("Asker_Name"));
+				qa.setAsker_Email(rs.getString("Asker_Email"));
+				qa.setQuestion_Content(rs.getString("Question_Content"));
+				qa.setAnswer_Content(rs.getString("Answer_Content"));
+				qa.setUpload_Date(rs.getDate("Upload_Date"));
+			}
+			rs.close();
+			smt.close();
+			
+			doSendMail(qa.getAsker_Name(),qa.getAsker_Email(),qa.getQuestion_Content(),qa.getAnswer_Content());
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+ 
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		
 	}
 	
-	public void doSendMail(String Asker_Name, String Asker_Email, String Question_Content, String Answer_Content) {
+	public void doSendMail(String asker_Name, String asker_Email, String question_Content, String answer_Content) {
 		String subject="輔大資管系相關問題回覆";
 	    String template = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n" +
 		"<html>\n" + "<head>\n" + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" + 
 	    "<title>輔大資管系相關問題回覆</title>\n" +
 	    "</head>\n" + "<body>\n" + 
-		"親愛的{Asker_Name}您好，您所發問的{Question_Content}之解答如下。<br/>\n" + 
-	    "解答：{Answer_Content}。\n" + 
+		"親愛的{0}您好，您所發問的{1}之解答如下。<br/>\n" + 
+	    "解答：{2}。\n" + 
 		"</body>\n" + "</html>\n";
 	    String message = "";
 
 	    HtmlEmail email = new HtmlEmail();
-	    String authuser = "winterhan10@gmail.com@gmail.com";
+	    String authuser = "winterhan10@gmail.com";
 	    String authpwd = "defy364tick4377";
 	    email.setHostName("smtp.gmail.com");
 	    email.setSmtpPort(465);
@@ -178,9 +168,9 @@ public class QADAOImpl implements QADAO{
 	    email.setSubject(subject);
 	    try {
 	      email.setFrom("winterhan10@gmail.com", "FJU");
-	      message = MessageFormat.format(template, new Object[] { Asker_Name, Question_Content, Answer_Content});
+	      message = MessageFormat.format(template, new Object[] { asker_Name, question_Content, answer_Content});
 	      email.setHtmlMsg(message);
-	      email.addTo(Asker_Email, Asker_Name);
+	      email.addTo(asker_Email, asker_Name);
 	      email.send();
 	      // out.println("郵件發送成功");
 	    } catch (EmailException e) {
@@ -200,8 +190,8 @@ public class QADAOImpl implements QADAO{
 			rs = smt.executeQuery();
 			while(rs.next()){
 				QA qa = new QA();
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
+				qa.getQuestionCategory().setqCate_ID(rs.getInt("QCate_ID"));
+				qa.getQuestionCategory().setqCate_Name(rs.getString("QCate_Name"));
 				qa.setQuestion_Content(rs.getString("Question_Content"));
 				qa.setAnswer_Content(rs.getString("Answer_Content"));
 				qa.setUpload_Date(rs.getDate("Upload_Date"));
@@ -226,8 +216,9 @@ public class QADAOImpl implements QADAO{
 	public List<QA> getProblemSetTrueList() {
 		// TODO Auto-generated method stub
 		List<QA> qaList = new ArrayList<QA>();
-		String sql = "SELECT * FROM qa a "
-				+ "WHERE ProblemSet = 1 JOIN QCate_ID b ON a.QCate_ID = b.QCate_ID "
+		String sql = "SELECT * FROM qa as a, questioncategory as b "
+				+ "WHERE  a.ProblemSet IS true "
+				+ "AND a.QCate_ID = b.QCate_ID "
 				+ "ORDER BY Question_ID DESC";
 		try {
 			conn = dataSource.getConnection();
@@ -235,11 +226,14 @@ public class QADAOImpl implements QADAO{
 			rs = smt.executeQuery();
 			while(rs.next()){
 				QA qa = new QA();
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
+				QuestionCategory qc = new QuestionCategory();
+				qc.setqCate_ID(rs.getInt("QCate_ID"));
+				qc.setqCate_Name(rs.getString("QCate_Name"));
+				qa.setQuestionCategory(qc);
 				qa.setQuestion_Content(rs.getString("Question_Content"));
 				qa.setAnswer_Content(rs.getString("Answer_Content"));
 				qa.setUpload_Date(rs.getDate("Upload_Date"));
+				qa.setProblemSet(rs.getBoolean("ProblemSet"));
 				qaList.add(qa);
 				}
 			rs.close();
@@ -257,23 +251,30 @@ public class QADAOImpl implements QADAO{
 		}
 		return qaList;
 	}
+	//待回答
 	public List<QA> getTrueList() {
 		// TODO Auto-generated method stub
 		List<QA> qaList = new ArrayList<QA>();
-		String sql = "SELECT * FROM qa a "
-				+ "WHERE Answer_Content = NULL JOIN QCate_ID b ON a.QCate_ID = b.QCate_ID "
+		String sql = "SELECT * FROM qa as a, questioncategory as b "
+				+ "WHERE  a.Answer_Content IS NULL "
+				+ "AND a.QCate_ID = b.QCate_ID "
 				+ "ORDER BY Question_ID DESC";
 		try {
 			conn = dataSource.getConnection();
 			smt = conn.prepareStatement(sql);
 			rs = smt.executeQuery();
 			while(rs.next()){
+				System.out.println("HAHAHA");
 				QA qa = new QA();
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
+				QuestionCategory qc = new QuestionCategory();
+				qc.setqCate_ID(rs.getInt("QCate_ID"));
+				qc.setqCate_Name(rs.getString("QCate_Name"));
+				qa.setQuestionCategory(qc);
 				qa.setQuestion_Content(rs.getString("Question_Content"));
 				qa.setAnswer_Content(rs.getString("Answer_Content"));
 				qa.setUpload_Date(rs.getDate("Upload_Date"));
+				qa.setQuestion_ID(rs.getInt("Question_ID"));
+				qa.setProblemSet(rs.getBoolean("ProblemSet"));
 				qaList.add(qa);
 				}
 			rs.close();
@@ -291,11 +292,13 @@ public class QADAOImpl implements QADAO{
 		}
 		return qaList;
 	}
+	//已回答
 	public List<QA> getFalseList() {
 		// TODO Auto-generated method stub
 		List<QA> qaList = new ArrayList<QA>();
-		String sql = "SELECT * FROM qa a "
-				+ "WHERE Answer_Content != NULL JOIN QCate_ID b ON a.QCate_ID = b.QCate_ID "
+		String sql = "SELECT * FROM qa as a, questioncategory as b "
+				+ "WHERE  a.Answer_Content IS NOT NULL "
+				+ "AND a.QCate_ID = b.QCate_ID "
 				+ "ORDER BY Question_ID DESC";
 		try {
 			conn = dataSource.getConnection();
@@ -303,11 +306,15 @@ public class QADAOImpl implements QADAO{
 			rs = smt.executeQuery();
 			while(rs.next()){
 				QA qa = new QA();
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
+				QuestionCategory qc = new QuestionCategory();
+				qc.setqCate_ID(rs.getInt("QCate_ID"));
+				qc.setqCate_Name(rs.getString("QCate_Name"));
+				qa.setQuestionCategory(qc);
 				qa.setQuestion_Content(rs.getString("Question_Content"));
 				qa.setAnswer_Content(rs.getString("Answer_Content"));
 				qa.setUpload_Date(rs.getDate("Upload_Date"));
+				qa.setQuestion_ID(rs.getInt("Question_ID"));
+				qa.setProblemSet(rs.getBoolean("ProblemSet"));
 				qaList.add(qa);
 				}
 			rs.close();
@@ -335,8 +342,8 @@ public class QADAOImpl implements QADAO{
 			smt.setInt(1, qa.getQuestion_ID());
 			rs = smt.executeQuery();
 			if(rs.next()){
-				qa.getQuestionCategory().setQCate_ID(rs.getInt("QCate_ID"));
-				qa.getQuestionCategory().setQCate_Name(rs.getString("QCate_Name"));
+				qa.getQuestionCategory().setqCate_ID(rs.getInt("QCate_ID"));
+				qa.getQuestionCategory().setqCate_Name(rs.getString("QCate_Name"));
 				qa.setQuestion_ID(rs.getInt("Question_ID"));
 				qa.setQuestion_Content(rs.getString("Question_Content"));
 				qa.setAnswer_Content(rs.getString("Answer_Content"));

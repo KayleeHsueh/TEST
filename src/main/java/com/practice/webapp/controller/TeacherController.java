@@ -91,7 +91,7 @@ public class TeacherController {
 		SpecialtyList4 = teacherDAO.getSpecialtyList(404);
 		//logger.info(""+teacherList.size());
 		model.addObject("SpecialtyList4", SpecialtyList4);
-		System.out.println( SpecialtyList4.get(0).getProfName());
+	
 		
 		//5 Specialty
 		List<Teacher> SpecialtyList5 = new ArrayList<Teacher>();
@@ -117,7 +117,7 @@ public class TeacherController {
 	
 	@RequestMapping(value = "/insertTeacher", method = RequestMethod.POST)
 	public ModelAndView insertTeacher(@ModelAttribute Teacher teacher){
-		ModelAndView model = new ModelAndView("redirect:/teacher");
+		ModelAndView model = new ModelAndView("redirect:/Teacher");
 		TeacherDAO teacherDAO = (TeacherDAO)context.getBean("teacherDAO");
 		teacherDAO.insert(teacher);
 		
@@ -143,6 +143,7 @@ public class TeacherController {
 		return model;
 	}*/
 	
+	
 	/*
 	@RequestMapping(value = "/updateTeacher", method = RequestMethod.POST)
 	public ModelAndView updateTeacher(@ModelAttribute Teacher teacher){
@@ -155,7 +156,7 @@ public class TeacherController {
 
 	@RequestMapping(value = "/deleteTeacher", method = RequestMethod.POST)
 	public ModelAndView deleteTeacher(@ModelAttribute Teacher teacher){
-		ModelAndView model = new ModelAndView("redirect:/teacher");
+		ModelAndView model = new ModelAndView("redirect:/Teacher");
 		TeacherDAO teacherDAO = (TeacherDAO)context.getBean("teacherDAO");
 		teacherDAO.delete(teacher);
 		return model;

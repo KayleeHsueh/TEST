@@ -137,7 +137,8 @@ body {
 				</c:forEach>
 			</table>
 			<br />
-			<br /> <font style="font-family: '微軟正黑體', Calibri" color="#003366"
+			<br /> 
+				<font style="font-family: '微軟正黑體', Calibri" color="#003366"
 				size="+1">商業智慧</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
@@ -169,8 +170,8 @@ body {
 				<c:forEach items="${SpecialtyList4}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" "width="100" height="100"/></th> 
-							<th>${teacher.profName}<br/>${teacher.profGraduateSchool}<br/>${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
+							<th><img src="${teacher.profPicture}" width="100" height="100"/></th>  
+							<th>${teacher.profName}<br />${teacher.profGraduateSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
 						<tr>
 					    <c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
@@ -185,7 +186,9 @@ body {
 				</c:forEach>
 			</table>
 			<br />
-			<br /><font style="font-family: '微軟正黑體', Calibri" color="#003366"
+			<br />
+			
+			<font style="font-family: '微軟正黑體', Calibri" color="#003366"
 				size="+1">電子商務</font>
 			<hr align="left" width="80%" color="#003366" size="1" />
 			<br />
@@ -193,8 +196,8 @@ body {
 				<c:forEach items="${SpecialtyList5}" var="teacher">
 					<!-- c:if test="${true}" -->
 						<tr>
-							<th><img src="${teacher.profPicture}" "width="100" height="100"/></th>  
-							<th>${teacher.profName}<br />${teacher.profGradusteSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
+							<th><img src="${teacher.profPicture}" width="100" height="100"/></th>   
+							<th>${teacher.profName}<br />${teacher.profGraduateSchool}<br />${teacher.profGraduateDepartment}<br />${teacher.profDegree}</th>
 						</tr>
 						<tr>
 						<c:if test="${sessionScope['scopedTarget.account'].identity=='secretary'}">
